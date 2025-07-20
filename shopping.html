@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Shopping</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #2e8b57;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #2e8b57;
+      padding: 10px 20px;
+      color: white;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .header-buttons button {
+      background: white;
+      color: #2e8b57;
+      border: none;
+      padding: 8px 16px;
+      margin-left: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .header-buttons button:hover {
+      background: #e0e0e0;
+    }
+    .cart-icon {
+      font-size: 24px;
+      margin-right: 80px;
+      cursor: pointer;
+      position: relative;
+    }
+    .cart-icon span {
+      background: #fff;
+      color: #2e8b57;
+      border-radius: 50%;
+      padding: 2px 8px;
+      font-size: 14px;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      display: none;
+    }
+    .content {
+      margin-top: 80px;
+    }
+    .product-list {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .product-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 20px;
+      width: 280px;
+      text-align: center;
+    }
+    .product-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .product-card h3 {
+      color: #2e8b57;
+    }
+    .product-card button {
+      background: #2e8b57;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <img src="Images/Logo.jpeg" alt="Grazin Acres Logo" style="height: 50px; width: auto; border-radius: 8px;">
+      <span style="font-size: 1.5em; font-weight: bold;">Grazin Acres</span>
+      <div class="header-buttons">
+        <button onclick="location.href='Grazin Acres.html'">Home</button>
+        
+        
+        <button onclick="location.href='About.html'">About</button>
+        <button onclick="location.href='contact.html'">Contact</button>
+        
+      </div>
+    </div>
+    <a class="cart-icon" href="cart.html" title="Shopping Cart">
+      &#128722;
+      <span id="cart-quantity" style="background: #fff; color: #2e8b57; border-radius: 50%; padding: 2px 8px; font-size: 14px; position: absolute; top: 10px; right: 20px; display: none;">0</span>
+    </a>
+  </div>
+  <div class="content">
+    <div class="product-list">
+      <!-- Product 1 -->
+      <div class="product-card">
+      <img src="Images/images (4).jpeg" alt="Farm Fresh Eggs">
+      <h3>Farm Fresh Eggs</h3>
+      <p>Enjoy a dozen free-range eggs, collected daily from happy hens. Taste the difference!</p>
+      <button>Add to Cart</button>
+      </div>
+      <!-- Product 2 -->
+      <div class="product-card">
+      <img src="Images/images (5).jpeg" alt="Raw Butter Oil">
+      <h3>Raw Local Honey</h3>
+      <p>Pure, unfiltered honey from our own bees. Perfect for sweetening tea or baking.</p>
+      <button>Add to Cart</button>
+      </div>
+      <!-- Product 3 -->
+      <div class="product-card">
+      <img src="Images/images (3).jpeg" alt="Heirloom Tomatoes">
+      <h3>Heirloom Tomatoes</h3>
+      <p>Juicy, colorful tomatoes grown without chemicals. Great for salads and sandwiches.</p>
+      <button>Add to Cart</button>
+      </div>
+    </div>
+    <script>
+      // Make sure cart badge updates on every page
+      function getCart() {
+      return JSON.parse(localStorage.getItem('cart')) || [];
+      }
+      function updateCartQuantity() {
+      const cart = getCart();
+      const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const cartQuantitySpan = document.getElementById('cart-quantity');
+      if (cartQuantitySpan) {
+        cartQuantitySpan.textContent = totalQuantity;
+        cartQuantitySpan.style.display = totalQuantity > 0 ? 'inline-block' : 'none';
+      }
+      }
+      updateCartQuantity();
+    </script>
+  </div>
+  <script>
+  // Store cart in localStorage so it persists between pages
+  function getCart() {
+    return JSON.parse(localStorage.getItem('cart')) || [];
+  }
+
+  function setCart(cart) {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }
+
+  // Update cart quantity badge
+  const cartQuantitySpan = document.getElementById('cart-quantity');
+  function updateCartQuantity() {
+    const cart = getCart();
+    const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+    cartQuantitySpan.textContent = totalQuantity;
+    cartQuantitySpan.style.display = totalQuantity > 0 ? 'inline-block' : 'none';
+  }
+
+  // Add product to cart
+  document.querySelectorAll('.product-card').forEach(card => {
+    card.querySelector('button').addEventListener('click', () => {
+      const name = card.querySelector('h3').textContent;
+      const img = card.querySelector('img').src;
+      // Find product in cart
+      let cart = getCart();
+      let item = cart.find(i => i.name === name);
+      if (item) {
+        item.quantity += 1;
+      } else {
+        cart.push({ name, img, quantity: 1 });
+      }
+      setCart(cart);
+      updateCartQuantity();
+    });
+  });
+
+  // On page load, show correct cart quantity
+  updateCartQuantity();
+</script>
+<script>
+  // Members-only authentication check
+  function checkAuthentication() {
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    const authToken = localStorage.getItem('authToken');
+    
+    if (!loggedInUser && !authToken) {
+      alert('This is a members-only area. Please log in to access our shop.');
+      window.location.href = 'login.html';
+      return false;
+    }
+    return true;
+  }
+
+  function getCart() {
+    return JSON.parse(localStorage.getItem('cart')) || [];
+  }
+
+  function updateCartQuantity() {
+    const cart = getCart();
+    const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const cartQuantitySpan = document.getElementById('cart-quantity');
+    if (cartQuantitySpan) {
+      cartQuantitySpan.textContent = totalQuantity;
+      cartQuantitySpan.style.display = totalQuantity > 0 ? 'inline-block' : 'none';
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('loggedInUser');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userProfile');
+    localStorage.removeItem('currentUserId');
+    alert('You have been logged out successfully.');
+    window.location.href = 'login.html';
+  }
+
+  // Check authentication and update cart on page load
+  window.onload = function() {
+    if (checkAuthentication()) {
+      updateCartQuantity();
+      
+      // Show member info
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      if (loggedInUser) {
+        const memberInfo = document.createElement('div');
+        memberInfo.style.cssText = `
+          position: fixed;
+          top: 70px;
+          right: 20px;
+          background: rgba(255,255,255,0.9);
+          color: #2e8b57;
+          padding: 8px 12px;
+          border-radius: 5px;
+          z-index: 1001;
+          font-size: 0.9em;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        `;
+        memberInfo.innerHTML = `Member: ${loggedInUser} | <a href="#" onclick="logout()" style="color: #dc3545; text-decoration: none;">Logout</a>`;
+        document.body.appendChild(memberInfo);
+      }
+    }
+  };
+</script>
+</body>
+</html>
